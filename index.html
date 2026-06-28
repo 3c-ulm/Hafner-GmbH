@@ -9,20 +9,14 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #f4f4f2;
+      background: #ffffff;
       color: #1a1a18;
-      min-height: 100vh;
-      padding: 2rem 1rem;
-    }
-
-    .page-wrap {
       max-width: 720px;
       margin: 0 auto;
-      background: #ffffff;
-      border-radius: 12px;
-      border: 1px solid #e0dfd8;
       padding: 2.5rem 2rem;
     }
+
+    .page-wrap {}
 
     .form-title {
       text-align: center;
@@ -30,7 +24,6 @@
       font-weight: 400;
       color: #c0392b;
       margin-bottom: 0.25rem;
-      letter-spacing: -0.01em;
     }
 
     .form-subtitle {
@@ -69,7 +62,6 @@
       margin-bottom: 2px;
     }
 
-    /* Assignment declaration box */
     .assignment-box {
       border: 1px solid #ccc;
       border-radius: 8px;
@@ -116,10 +108,7 @@
       flex-wrap: wrap;
     }
 
-    .eur-row span {
-      font-size: 13.5px;
-      color: #1a1a18;
-    }
+    .eur-row span { font-size: 13.5px; color: #1a1a18; }
 
     .eur-input-wrap {
       display: flex;
@@ -141,10 +130,7 @@
       outline: none;
     }
 
-    .eur-input-wrap .eur-symbol {
-      font-size: 14px;
-      color: #9a9a94;
-    }
+    .eur-input-wrap .eur-symbol { font-size: 14px; color: #9a9a94; }
 
     .assignment-note {
       font-size: 12px;
@@ -154,7 +140,6 @@
       line-height: 1.6;
     }
 
-    /* Section headers */
     .section-label {
       font-size: 11px;
       font-weight: 600;
@@ -164,27 +149,12 @@
       margin: 1.5rem 0 0.6rem;
     }
 
-    /* Field layout */
-    .field-row {
-      display: grid;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
+    .field-row { display: grid; gap: 12px; margin-bottom: 12px; }
     .field-row.two { grid-template-columns: 1fr 1fr; }
     .field-row.three { grid-template-columns: 2fr 1fr; }
 
-    .field-group {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .field-group label {
-      font-size: 12px;
-      color: #5a5a56;
-      font-weight: 500;
-    }
+    .field-group { display: flex; flex-direction: column; gap: 5px; }
+    .field-group label { font-size: 12px; color: #5a5a56; font-weight: 500; }
 
     .field-group input[type="text"],
     .field-group input[type="date"],
@@ -208,7 +178,6 @@
 
     .field-group input::placeholder { color: #b0afa8; }
 
-    /* Radio */
     .radio-group {
       display: flex;
       gap: 1.5rem;
@@ -231,14 +200,12 @@
       height: 16px;
     }
 
-    /* Divider */
     hr.divider {
       border: none;
       border-top: 1px solid #e0dfd8;
       margin: 1.5rem 0;
     }
 
-    /* Accident sub-box */
     .accident-box {
       background: #f9f9f7;
       border: 1px solid #d0cfc8;
@@ -255,7 +222,6 @@
       letter-spacing: 0.04em;
     }
 
-    /* Buttons */
     .btn-row {
       display: flex;
       gap: 10px;
@@ -275,10 +241,10 @@
       display: flex;
       align-items: center;
       gap: 7px;
-      transition: background 0.15s, border-color 0.15s;
+      transition: background 0.15s;
     }
 
-    .btn-secondary:hover { background: #f4f4f2; border-color: #b0afa8; }
+    .btn-secondary:hover { background: #f4f4f2; }
 
     .btn-primary {
       background: #185fa5;
@@ -297,22 +263,48 @@
     }
 
     .btn-primary:hover { background: #0c447c; }
+    .btn-primary:disabled { background: #b0afa8; cursor: not-allowed; }
 
-    /* Print styles */
-    @media print {
-      body { background: white; padding: 0; }
-      .page-wrap { border: none; border-radius: 0; box-shadow: none; padding: 1.5rem; }
-      .btn-row { display: none; }
-      .form-title { color: #c0392b !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      input { border: 1px solid #ccc !important; }
-    }
-
-    /* Mobile */
     @media (max-width: 540px) {
       .field-row.two, .field-row.three { grid-template-columns: 1fr; }
       .page-wrap { padding: 1.5rem 1rem; }
       .eur-row { flex-direction: column; align-items: flex-start; }
     }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e0dfd8;
+      padding: 2rem;
+      max-width: 360px;
+      width: 90%;
+      text-align: center;
+    }
+    .modal h3 { font-size: 16px; font-weight: 600; color: #1a1a18; margin-bottom: 0.5rem; }
+    .modal p { font-size: 13.5px; color: #5a5a56; line-height: 1.6; margin-bottom: 1.5rem; }
+    .modal-btns { display: flex; gap: 10px; justify-content: center; }
+    .modal-btns .btn-cancel {
+      background: transparent; color: #5a5a56; border: 1px solid #d0cfc8;
+      border-radius: 8px; padding: 9px 20px; font-size: 14px; cursor: pointer;
+      font-family: inherit; transition: background 0.15s;
+    }
+    .modal-btns .btn-cancel:hover { background: #f4f4f2; }
+    .modal-btns .btn-confirm {
+      background: #c0392b; color: #fff; border: none; border-radius: 8px;
+      padding: 9px 20px; font-size: 14px; font-weight: 500; cursor: pointer;
+      font-family: inherit; transition: background 0.15s;
+    }
+    .modal-btns .btn-confirm:hover { background: #a93226; }
   </style>
 </head>
 <body>
@@ -328,7 +320,6 @@
     Dieselstrasse 9, 89231 Neu-Ulm
   </div>
 
-  <!-- Assignment declaration -->
   <div class="assignment-box">
     <p>Bei dem unten bezeichneten Verkehrsunfall wurde mein <strong>FAHRZEUG beschädigt.</strong><br>
     Hiermit trete ich meinen Schadensersatzanspruch</p>
@@ -355,7 +346,6 @@
     </p>
   </div>
 
-  <!-- Customer data -->
   <div class="section-label">Ihre Daten</div>
 
   <div class="field-row">
@@ -380,9 +370,13 @@
     </div>
   </div>
 
-  <div class="field-row two">
+  <div class="field-row" style="grid-template-columns: 1fr 1fr 1fr;">
     <div class="field-group">
-      <label for="datum">Ort / Datum</label>
+      <label for="ort">Ort</label>
+      <input type="text" id="ort" placeholder="z. B. Ulm" />
+    </div>
+    <div class="field-group">
+      <label for="datum">Datum</label>
       <input type="date" id="datum" />
     </div>
     <div class="field-group">
@@ -393,7 +387,6 @@
 
   <hr class="divider" />
 
-  <!-- Accident data -->
   <div class="section-label">Unfalldaten</div>
 
   <div class="accident-box">
@@ -459,18 +452,34 @@
   </div>
 
   <div class="btn-row">
-    <button class="btn-secondary" onclick="clearForm()">
-      ✕ Leeren
-    </button>
-    <button class="btn-primary" onclick="window.print()">
-      ⬇ Als PDF speichern / Drucken
-    </button>
+    <button class="btn-secondary" onclick="openModal()">✕ Leeren</button>
+    <button class="btn-primary" id="pdf-btn" onclick="generatePDF()">⬇ Als PDF speichern</button>
   </div>
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
   document.getElementById('datum').value = new Date().toISOString().split('T')[0];
+
+  function val(id) {
+    return (document.getElementById(id)?.value || '').trim();
+  }
+
+  function checked(id) {
+    return document.getElementById(id)?.checked;
+  }
+
+  function radioVal(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : '';
+  }
+
+  function formatDate(raw) {
+    if (!raw) return '';
+    const [y, m, d] = raw.split('-');
+    return `${d}.${m}.${y}`;
+  }
 
   function clearForm() {
     document.querySelectorAll('input[type=text], input[type=date], input[type=number]').forEach(i => i.value = '');
@@ -478,7 +487,249 @@
     document.querySelector('input[name=vst][value=nein]').checked = true;
     document.getElementById('datum').value = new Date().toISOString().split('T')[0];
   }
+
+  function generatePDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+
+    const W = 210;
+    const margin = 20;
+    const col = W - margin * 2;
+    let y = 20;
+
+    const colorRed   = [192, 57, 43];
+    const colorBlack = [26, 26, 24];
+    const colorGray  = [90, 90, 86];
+    const colorLight = [245, 245, 243];
+    const colorMid   = [208, 207, 200];
+
+    // Title
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(20);
+    doc.setTextColor(...colorRed);
+    doc.text('Auftragsbestätigung', W / 2, y, { align: 'center' });
+    y += 8;
+
+    // Subtitle box
+    doc.setDrawColor(...colorBlack);
+    doc.setLineWidth(0.5);
+    doc.rect(margin, y, col, 9);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(...colorBlack);
+    doc.text('Abtretungserklärung', W / 2, y + 6.2, { align: 'center' });
+    y += 15;
+
+    // Workshop box
+    doc.setFillColor(...colorLight);
+    doc.setDrawColor(...colorMid);
+    doc.roundedRect(margin, y, col, 18, 2, 2, 'FD');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...colorGray);
+    doc.text('NAME/ANSCHRIFT DER WERKSTATT', margin + 4, y + 5);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.setTextColor(24, 95, 165);
+    doc.text('Hafner GmbH', margin + 4, y + 10);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(...colorGray);
+    doc.text('Dieselstrasse 9, 89231 Neu-Ulm', margin + 4, y + 15);
+    y += 24;
+
+    // Assignment declaration box
+    doc.setFillColor(250, 250, 248);
+    doc.setDrawColor(...colorMid);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(margin, y, col, 52, 2, 2, 'FD');
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9.5);
+    doc.setTextColor(...colorBlack);
+    doc.text('Bei dem unten bezeichneten Verkehrsunfall wurde mein', margin + 4, y + 7);
+    doc.setFont('helvetica', 'bold');
+    doc.text('FAHRZEUG beschädigt.', margin + 4, y + 12);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Hiermit trete ich meinen Schadensersatzanspruch', margin + 4, y + 17);
+
+    // Checkboxes a) and b)
+    const chkA = checked('chk-a');
+    const chkB = checked('chk-b');
+
+    doc.setDrawColor(...colorBlack);
+    doc.setLineWidth(0.4);
+    doc.rect(margin + 6, y + 20, 4, 4);
+    if (chkA) {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.text('X', margin + 7, y + 23.5);
+    }
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9.5);
+    doc.text('a)  gegen die Haftpflichtversicherung des Unfallgegners', margin + 12, y + 23.5);
+
+    doc.rect(margin + 6, y + 27, 4, 4);
+    if (chkB) {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.text('X', margin + 7, y + 30.5);
+    }
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9.5);
+    doc.text('b)  meine Kaskoversicherung', margin + 12, y + 30.5);
+
+    // EUR field
+    const eur = val('eur-betrag');
+    doc.setFontSize(9.5);
+    doc.text('in Höhe der Reparaturkosten/Fahrzeugschaden (EUR):', margin + 4, y + 38);
+    doc.setDrawColor(...colorMid);
+    doc.line(margin + 110, y + 38.5, margin + 160, y + 38.5);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.text(eur ? `${parseFloat(eur).toFixed(2)} €` : '', margin + 112, y + 38);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(...colorGray);
+    doc.text('zur Sicherung des Anspruchs auf Bezahlung der Reparaturkosten/Fahrzeugschaden', margin + 4, y + 44);
+    doc.text('unwiderruflich an die obengenannte Werkstatt ab.', margin + 4, y + 49);
+
+    y += 58;
+
+    // Helper: section header
+    function sectionHeader(label) {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.setTextColor(...colorGray);
+      doc.text(label.toUpperCase(), margin, y);
+      y += 5;
+      doc.setDrawColor(...colorMid);
+      doc.setLineWidth(0.3);
+      doc.line(margin, y, margin + col, y);
+      y += 4;
+    }
+
+    // Helper: labeled field row
+    function fieldRow(fields) {
+      const n = fields.length;
+      const spacing = col / n;
+      fields.forEach((f, i) => {
+        const x = margin + i * spacing;
+        const w = spacing - (i < n - 1 ? 4 : 0);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(...colorGray);
+        doc.text(f.label, x, y);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.setTextColor(...colorBlack);
+        doc.text(f.value || '—', x, y + 6);
+        doc.setDrawColor(...colorMid);
+        doc.setLineWidth(0.3);
+        doc.line(x, y + 8, x + w, y + 8);
+      });
+      y += 14;
+    }
+
+    // Customer data
+    sectionHeader('Ihre Daten');
+
+    fieldRow([{ label: 'Name / Adresse', value: val('name') }]);
+    fieldRow([{ label: 'Straße, PLZ, Ort', value: val('address') }]);
+
+    const vstVal = radioVal('vst');
+    fieldRow([
+      { label: 'Vorsteuerabzug', value: vstVal === 'ja' ? 'Ja' : 'Nein' },
+      { label: 'Ort', value: val('ort') },
+      { label: 'Datum', value: formatDate(val('datum')) },
+      { label: 'Unterschrift', value: val('unterschrift') }
+    ]);
+
+    y += 2;
+
+    // Accident box
+    doc.setFillColor(...colorLight);
+    doc.setDrawColor(...colorMid);
+    const accBoxStart = y;
+    doc.roundedRect(margin, y, col, 70, 2, 2, 'FD');
+    y += 6;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(...colorBlack);
+    doc.text('VERKEHRSUNFALL', margin + 4, y);
+    y += 6;
+
+    function accField(fields) {
+      const n = fields.length;
+      const spacing = col / n;
+      fields.forEach((f, i) => {
+        const x = margin + 4 + i * spacing;
+        const w = spacing - (i < n - 1 ? 6 : 6);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7.5);
+        doc.setTextColor(...colorGray);
+        doc.text(f.label, x, y);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9.5);
+        doc.setTextColor(...colorBlack);
+        doc.text(f.value || '—', x, y + 5);
+        doc.setDrawColor(...colorMid);
+        doc.setLineWidth(0.25);
+        doc.line(x, y + 6.5, x + w, y + 6.5);
+      });
+      y += 12;
+    }
+
+    accField([
+      { label: 'Datum des Unfalls', value: formatDate(val('unfall-datum')) },
+      { label: 'Unfallort', value: val('unfall-ort') }
+    ]);
+
+    accField([
+      { label: 'Unfallbeschädigtes Fahrzeug', value: val('fahrzeug') },
+      { label: 'Kennzeichen', value: val('kennz') }
+    ]);
+
+    accField([{ label: 'Unfallgegner (Name, Anschrift)', value: val('unfallgegner') }]);
+    accField([{ label: 'Versicherungsgesellschaft', value: val('versicherung') }]);
+
+    accField([
+      { label: 'Versicherungs-Nr.', value: val('vers-nr') },
+      { label: 'Schaden-/Versicherungsschein-Nr.', value: val('schaden-nr') }
+    ]);
+
+    accField([
+      { label: 'Besichtigung durch Kfz-Sachverständigen', value: val('sachverst') },
+      { label: 'Besichtigungsdatum', value: formatDate(val('besicht-datum')) }
+    ]);
+
+    // Footer
+    y = 285;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    doc.setTextColor(...colorGray);
+    doc.text('Hafner GmbH · Dieselstrasse 9 · 89231 Neu-Ulm', W / 2, y, { align: 'center' });
+
+    // Save
+    const name = val('name') || 'Kunde';
+    const date = formatDate(val('datum')) || new Date().toLocaleDateString('de-DE');
+    doc.save(`Abtretungserklaerung_${name.replace(/\s+/g, '_')}_${date.replace(/\./g, '-')}.pdf`);
+  }
 </script>
+
+
+<div class="modal-overlay" id="clear-modal">
+  <div class="modal">
+    <h3>Formular leeren?</h3>
+    <p>Alle eingegebenen Daten werden unwiderruflich gelöscht.</p>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Abbrechen</button>
+      <button class="btn-confirm" onclick="confirmClear()">Ja, leeren</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
