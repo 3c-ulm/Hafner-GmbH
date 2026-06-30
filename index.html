@@ -155,6 +155,39 @@
 
     .field-group { display: flex; flex-direction: column; gap: 5px; }
     .field-group label { font-size: 12px; color: #5a5a56; font-weight: 500; }
+    .required-mark { color: #c0392b; margin-left: 2px; }
+    .field-error { border-color: #c0392b !important; }
+    .error-banner { display: none; background: #fdecea; border: 1px solid #f1b4ac; color: #a93226; font-size: 13px; padding: 10px 14px; border-radius: 6px; margin-bottom: 1rem; }
+    .error-banner.active { display: block; }
+
+    .autocomplete-wrap { position: relative; }
+
+    .autocomplete-list {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid #d0cfc8;
+      border-radius: 6px;
+      max-height: 220px;
+      overflow-y: auto;
+      z-index: 20;
+    }
+
+    .autocomplete-list.active { display: block; }
+
+    .autocomplete-item {
+      padding: 9px 12px;
+      font-size: 13.5px;
+      color: #1a1a18;
+      cursor: pointer;
+      border-bottom: 1px solid #f0efe9;
+    }
+
+    .autocomplete-item:last-child { border-bottom: none; }
+    .autocomplete-item:hover, .autocomplete-item.active { background: #f4f4f2; }
 
     .field-group input[type="text"],
     .field-group input[type="date"],
@@ -265,6 +298,52 @@
     .btn-primary:hover { background: #0c447c; }
     .btn-primary:disabled { background: #b0afa8; cursor: not-allowed; }
 
+    .sig-wrap {
+      position: relative;
+      border: 1px solid #d0cfc8;
+      border-radius: 6px;
+      background: #fff;
+      height: 160px;
+      overflow: hidden;
+    }
+
+    .sig-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    .sig-placeholder {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 13px;
+      color: #b0afa8;
+      pointer-events: none;
+    }
+
+    .sig-actions {
+      margin-top: 6px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-sig-clear {
+      background: transparent;
+      border: none;
+      color: #9a9a94;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: inherit;
+      padding: 4px 6px;
+      transition: color 0.15s;
+    }
+
+    .btn-sig-clear:hover { color: #c0392b; }
+
     @media (max-width: 540px) {
       body { padding: 1rem 1.25rem; }
       .field-row.two, .field-row.three { grid-template-columns: 1fr; }
@@ -312,6 +391,8 @@
 
 <div class="page-wrap">
 
+  <div class="error-banner" id="error-banner"></div>
+
   <div class="form-title">Auftragsbestätigung</div>
   <div class="form-subtitle">Abtretungserklärung</div>
 
@@ -337,7 +418,7 @@
     <div class="eur-row">
       <span>in Höhe der Reparaturkosten/Fahrzeugschaden (EUR):</span>
       <div class="eur-input-wrap">
-        <input type="number" id="eur-betrag" placeholder="0,00" min="0" step="0.01" />
+        <input type="text" id="eur-betrag" placeholder="0,00" inputmode="decimal" />
         <span class="eur-symbol">€</span>
       </div>
     </div>
@@ -351,13 +432,16 @@
 
   <div class="field-row">
     <div class="field-group">
-      <label for="name">Name / Adresse</label>
-      <input type="text" id="name" placeholder="Vor- und Nachname" />
+      <label for="name">Name / Adresse <span class="required-mark">*</span></label>
+      <input type="text" id="name" placeholder="Vor- und Nachname" autocomplete="name" />
     </div>
   </div>
   <div class="field-row">
     <div class="field-group">
-      <input type="text" id="address" placeholder="Straße, Hausnummer, PLZ, Ort" />
+      <div class="autocomplete-wrap">
+        <input type="text" id="address" placeholder="Straße, Hausnummer, PLZ, Ort" autocomplete="off" />
+        <div class="autocomplete-list" id="address-suggestions"></div>
+      </div>
     </div>
   </div>
 
@@ -383,8 +467,14 @@
   </div>
   <div class="field-row">
     <div class="field-group">
-      <label for="unterschrift">Unterschrift (Name)</label>
-      <input type="text" id="unterschrift" placeholder="Vor- und Nachname" />
+      <label>Unterschrift <span class="required-mark">*</span></label>
+      <div class="sig-wrap">
+        <canvas id="sig-canvas" class="sig-canvas"></canvas>
+        <div class="sig-placeholder" id="sig-placeholder">Bitte hier unterschreiben</div>
+      </div>
+      <div class="sig-actions">
+        <button type="button" class="btn-sig-clear" onclick="clearSignature()">✕ Unterschrift löschen</button>
+      </div>
     </div>
   </div>
 
@@ -413,7 +503,7 @@
       </div>
       <div class="field-group">
         <label for="kennz">Kennzeichen</label>
-        <input type="text" id="kennz" placeholder="UL-AB 123" />
+        <input type="text" id="kennz" placeholder="UL-AB 123" autocapitalize="characters" />
       </div>
     </div>
 
@@ -434,11 +524,11 @@
     <div class="field-row two">
       <div class="field-group">
         <label for="vers-nr">Versicherungs-Nr.</label>
-        <input type="text" id="vers-nr" placeholder="Versicherungsnummer" />
+        <input type="text" id="vers-nr" placeholder="Versicherungsnummer" inputmode="numeric" />
       </div>
       <div class="field-group">
         <label for="schaden-nr">Schaden-/Versicherungsschein-Nr.</label>
-        <input type="text" id="schaden-nr" placeholder="Schadennummer" />
+        <input type="text" id="schaden-nr" placeholder="Schadennummer" inputmode="numeric" />
       </div>
     </div>
 
@@ -456,7 +546,8 @@
 
   <div class="btn-row">
     <button class="btn-secondary" onclick="openModal()">✕ Leeren</button>
-    <button class="btn-primary" id="pdf-btn" onclick="generatePDF()">⬇ Als PDF speichern</button>
+    <button class="btn-secondary" id="pdf-btn" onclick="generatePDF()">⬇ Als PDF speichern</button>
+    <button class="btn-primary" onclick="if(validateForm()){alert('Diese Funktion ist noch nicht aktiv.')}">✉ Per E-Mail senden</button>
   </div>
 
 </div>
@@ -465,9 +556,159 @@
 <script>
   document.getElementById('datum').value = new Date().toISOString().split('T')[0];
 
+  // ----- Signature pad -----
+  const sigCanvas = document.getElementById('sig-canvas');
+  const sigCtx = sigCanvas.getContext('2d');
+  const sigPlaceholder = document.getElementById('sig-placeholder');
+  let sigHasContent = false;
+  let drawing = false;
+  let lastX = 0, lastY = 0;
+
+  function resizeSigCanvas() {
+    const rect = sigCanvas.parentElement.getBoundingClientRect();
+    const ratio = window.devicePixelRatio || 1;
+    const imgData = sigHasContent ? sigCanvas.toDataURL() : null;
+    sigCanvas.width = rect.width * ratio;
+    sigCanvas.height = rect.height * ratio;
+    sigCtx.scale(ratio, ratio);
+    sigCtx.strokeStyle = '#1a1a18';
+    sigCtx.lineWidth = 2;
+    sigCtx.lineCap = 'round';
+    sigCtx.lineJoin = 'round';
+    if (imgData) {
+      const img = new Image();
+      img.onload = () => sigCtx.drawImage(img, 0, 0, rect.width, rect.height);
+      img.src = imgData;
+    }
+  }
+  resizeSigCanvas();
+  window.addEventListener('resize', resizeSigCanvas);
+
+  function getPos(e) {
+    const rect = sigCanvas.getBoundingClientRect();
+    const point = e.touches ? e.touches[0] : e;
+    return { x: point.clientX - rect.left, y: point.clientY - rect.top };
+  }
+
+  function startDraw(e) {
+    e.preventDefault();
+    drawing = true;
+    sigHasContent = true;
+    sigPlaceholder.style.display = 'none';
+    sigCanvas.parentElement.classList.remove('field-error');
+    const pos = getPos(e);
+    lastX = pos.x; lastY = pos.y;
+  }
+
+  function moveDraw(e) {
+    if (!drawing) return;
+    e.preventDefault();
+    const pos = getPos(e);
+    sigCtx.beginPath();
+    sigCtx.moveTo(lastX, lastY);
+    sigCtx.lineTo(pos.x, pos.y);
+    sigCtx.stroke();
+    lastX = pos.x; lastY = pos.y;
+  }
+
+  function endDraw() { drawing = false; }
+
+  sigCanvas.addEventListener('mousedown', startDraw);
+  sigCanvas.addEventListener('mousemove', moveDraw);
+  window.addEventListener('mouseup', endDraw);
+  sigCanvas.addEventListener('touchstart', startDraw, { passive: false });
+  sigCanvas.addEventListener('touchmove', moveDraw, { passive: false });
+  sigCanvas.addEventListener('touchend', endDraw);
+
+  function clearSignature() {
+    sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+    sigHasContent = false;
+    sigPlaceholder.style.display = 'block';
+  }
+
+  function getSignatureDataURL() {
+    return sigHasContent ? sigCanvas.toDataURL('image/png') : null;
+  }
+  // ----- End signature pad -----
+
+  // ----- EUR formatting -----
+  const eurInput = document.getElementById('eur-betrag');
+  eurInput.addEventListener('input', function() {
+    let raw = this.value.replace(/[^\d,]/g, '');
+    const parts = raw.split(',');
+    let intPart = parts[0].replace(/\./g, '');
+    let decPart = parts.length > 1 ? parts[1].slice(0, 2) : '';
+    intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    this.value = decPart !== '' || raw.includes(',') ? `${intPart},${decPart}` : intPart;
+  });
+
+  function eurToNumber() {
+    const raw = eurInput.value.replace(/\./g, '').replace(',', '.');
+    return raw ? parseFloat(raw) : 0;
+  }
+  // ----- End EUR formatting -----
+
+  // ----- Address autocomplete (OpenStreetMap / Nominatim) -----
+  const addressInput = document.getElementById('address');
+  const suggestionBox = document.getElementById('address-suggestions');
+  let addressDebounce = null;
+
+  addressInput.addEventListener('input', function() {
+    const query = this.value.trim();
+    clearTimeout(addressDebounce);
+    if (query.length < 4) {
+      suggestionBox.classList.remove('active');
+      suggestionBox.innerHTML = '';
+      return;
+    }
+    addressDebounce = setTimeout(() => fetchAddressSuggestions(query), 400);
+  });
+
+  async function fetchAddressSuggestions(query) {
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&countrycodes=de&q=${encodeURIComponent(query)}`;
+      const res = await fetch(url, { headers: { 'Accept-Language': 'de' } });
+      const data = await res.json();
+      renderSuggestions(data);
+    } catch (err) {
+      suggestionBox.classList.remove('active');
+    }
+  }
+
+  function renderSuggestions(results) {
+    suggestionBox.innerHTML = '';
+    if (!results || !results.length) {
+      suggestionBox.classList.remove('active');
+      return;
+    }
+    results.forEach(r => {
+      const item = document.createElement('div');
+      item.className = 'autocomplete-item';
+      item.textContent = r.display_name;
+      item.addEventListener('click', () => {
+        addressInput.value = r.display_name;
+        addressInput.classList.remove('field-error');
+        suggestionBox.classList.remove('active');
+        suggestionBox.innerHTML = '';
+      });
+      suggestionBox.appendChild(item);
+    });
+    suggestionBox.classList.add('active');
+  }
+
+  document.addEventListener('click', function(e) {
+    if (e.target !== addressInput && !suggestionBox.contains(e.target)) {
+      suggestionBox.classList.remove('active');
+    }
+  });
+  // ----- End address autocomplete -----
+
   function val(id) {
     return (document.getElementById(id)?.value || '').trim();
   }
+
+  document.getElementById('name').addEventListener('input', function() { this.classList.remove('field-error'); });
+  document.getElementById('address').addEventListener('input', function() { this.classList.remove('field-error'); });
 
   function checked(id) {
     return document.getElementById(id)?.checked;
@@ -485,13 +726,56 @@
   }
 
   function clearForm() {
-    document.querySelectorAll('input[type=text], input[type=date], input[type=number]').forEach(i => i.value = '');
+    document.querySelectorAll('input[type=text], input[type=date], input[type=number]').forEach(i => {
+      i.value = '';
+      i.classList.remove('field-error');
+    });
     document.querySelectorAll('input[type=checkbox]').forEach(i => i.checked = false);
     document.querySelector('input[name=vst][value=nein]').checked = true;
     document.getElementById('datum').value = new Date().toISOString().split('T')[0];
+    clearSignature();
+    hideError();
   }
 
+  // ----- Validation -----
+  function showError(message) {
+    const banner = document.getElementById('error-banner');
+    banner.textContent = message;
+    banner.classList.add('active');
+    banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function hideError() {
+    document.getElementById('error-banner').classList.remove('active');
+  }
+
+  function validateForm() {
+    document.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
+    hideError();
+
+    const missing = [];
+
+    if (!val('name')) { missing.push('Name'); document.getElementById('name').classList.add('field-error'); }
+    if (!val('address')) { missing.push('Adresse'); document.getElementById('address').classList.add('field-error'); }
+    if (!checked('chk-a') && !checked('chk-b')) {
+      missing.push('Auswahl a) oder b)');
+    }
+    if (!sigHasContent) {
+      missing.push('Unterschrift');
+      document.getElementById('sig-canvas').parentElement.classList.add('field-error');
+    }
+
+    if (missing.length) {
+      showError('Bitte füllen Sie folgende Pflichtfelder aus: ' + missing.join(', ') + '.');
+      return false;
+    }
+    return true;
+  }
+  // ----- End validation -----
+
   function generatePDF() {
+    if (!validateForm()) return;
+
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit: 'mm', format: 'a4' });
 
@@ -590,7 +874,7 @@
     doc.line(margin + 110, y + 38.5, margin + 160, y + 38.5);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(10);
-    doc.text(eur ? `${parseFloat(eur).toFixed(2)} €` : '', margin + 112, y + 38);
+    doc.text(eur ? `${eur} €` : '', margin + 112, y + 38);
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8.5);
@@ -645,11 +929,29 @@
     fieldRow([
       { label: 'Vorsteuerabzug', value: vstVal === 'ja' ? 'Ja' : 'Nein' },
       { label: 'Ort', value: val('ort') },
-      { label: 'Datum', value: formatDate(val('datum')) },
-      { label: 'Unterschrift', value: val('unterschrift') }
+      { label: 'Datum', value: formatDate(val('datum')) }
     ]);
 
-    y += 2;
+    // Signature
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...colorGray);
+    doc.text('UNTERSCHRIFT', margin, y);
+    y += 3;
+
+    const sigData = getSignatureDataURL();
+    if (sigData) {
+      const sigW = 60;
+      const sigH = 20;
+      doc.addImage(sigData, 'PNG', margin, y, sigW, sigH);
+      y += sigH + 2;
+    } else {
+      y += 14;
+    }
+    doc.setDrawColor(...colorMid);
+    doc.setLineWidth(0.3);
+    doc.line(margin, y, margin + 70, y);
+    y += 8;
 
     // Accident box
     doc.setFillColor(...colorLight);
